@@ -86,7 +86,7 @@ For example:
 
 1. `now` is 5000ms and `end` is 5000ms + 5000ms = 10_000ms
 1. In useEffect, `now` is being updated every 1000ms
-1. So second is constantly changing -> second = `now` - `end`
+1. So second is constantly changing -> second = `end` - `now`
    - When start, end - now -> 10_000 - 5000 = 5000
    - 1st 1000ms, 10_000 - 6000 = 4000
    - 2nd 1000ms, 10_000 - 7000 = 3000
@@ -95,23 +95,23 @@ For example:
    - 5th 1000ms, 10_000 - 10_000 = 0000ms
 
 - With this approach, I don't rely on `setInterval` to count the seconds for me.
-- But I use `setInterval` to update the ongoing timestamp for me, I then use the `end` timestamp to minus `now` timestamp in order for me to know how many seconds left.
+- But I use `setInterval` to update the ongoing timestamp for me, then I use the `end` timestamp to minus `now` timestamp in order for me to know how many seconds left.
 
 ### Important note
 
 Realise I use `useInterval(() => {}, 100)`?
 
-I don't update the timer at exactly 1000ms, because again `setInterval` is not reliable. With 1000ms interval, that means `setNow` will only trigger **at least** 1000ms.
+I don't update the timer at exactly 1000ms, because `setInterval` is not reliable. With 1000ms interval, that means `setNow` will only trigger **at least** 1000ms, not exactly at 1000ms.
 
 Let's look at this table:
 | Fires at | now | second | Display | How long user saw previous value |
 | ----- | ----- | ----- | ----- | ----- |
 | 0ms (render) | 5000 | 5.0 → 5 | "5" | — |
 | 1047ms | 6047 | 3.95 → 4 | "4" | "5" shown for 1.047s |
-| 2103ms | 7103 | 2.90 → 3 | "3" | "4" shown for 1.056s |
-| 3098ms | 8098 | 1.90 → 2 | "2" | "3" shown for 0.995s |
-| 4210ms | 9210 | 0.79 → 1 | "1" | "2" shown for 1.112s |
-| 5150ms | 10150 | 0 → 0 | "0" | "1" shown for 0.940s |
+| 2103ms | 7103 | 2.90 → 3 | "3" | "4" shown for 1.056s (2103 - 1047) |
+| 3098ms | 8098 | 1.90 → 2 | "2" | "3" shown for 0.995s (3098 - 2103) |
+| 4210ms | 9210 | 0.79 → 1 | "1" | "2" shown for 1.112s (4210 - 3098) |
+| 5150ms | 10150 | 0 → 0 | "0" | "1" shown for 0.940s (5150 - 4210) |
 
 With 100ms as interval, the wrong time will be shown in very short amount of time, around 100ms++, which is unnoticeable to human eyes.
 
