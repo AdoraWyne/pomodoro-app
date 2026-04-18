@@ -113,4 +113,6 @@ Let's look at this table:
 | 4210ms | 9210 | 0.79 → 1 | "1" | "2" shown for 1.112s |
 | 5150ms | 10150 | 0 → 0 | "0" | "1" shown for 0.940s |
 
-The smaller interval time, the more frequent the `setNow` will be triggered, the more frequent the time `now` will be updated, then the smaller gap the wrong time will be shown.
+With 100ms as interval, the wrong time will be shown in very short amount of time, around 100ms++, which is unnoticeable to human eyes.
+
+**The smaller interval time, the more frequent the `setNow` will be triggered, the more frequent the time `now` will be updated, then the smaller gap the wrong time will be shown.**
