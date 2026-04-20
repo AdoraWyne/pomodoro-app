@@ -10,15 +10,19 @@ function App() {
   const [now, setNow] = useState(() => Date.now()); // constantly moving
   const [end, setEnd] = useState(() => Date.now() + 5000); // fixed , use useEnd when reset
 
+  const remainingSeconds = (end - now) / 1000;
+  const isRunning = remainingSeconds > 0;
+  const second = Math.ceil(Math.max(0, end - now) / 1000);
+
   useEffect(() => {
+    if (!isRunning) return;
+
     const secondTimer = setInterval(() => {
       setNow(Date.now());
     }, 100);
 
     return () => clearInterval(secondTimer);
-  }, []);
-
-  const second = Math.ceil(Math.max(0, end - now) / 1000);
+  }, [isRunning]);
 
   return (
     <>
