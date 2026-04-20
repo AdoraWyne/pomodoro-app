@@ -10,12 +10,22 @@ function App() {
   const [now, setNow] = useState(() => Date.now()); // constantly moving
   const [end, setEnd] = useState(() => Date.now() + 60_000); // fixed , use useEnd when reset
   const [pause, setPause] = useState(false);
+  const [pauseTime, setPauseTime] = useState(0);
 
   const remainingSeconds = (end - now) / 1000;
   const isRunning = remainingSeconds > 0;
   const second = Math.ceil(Math.max(0, end - now) / 1000);
 
   const handlePause = () => {
+    if (!pause) {
+      // going into pause state
+      setPauseTime(Date.now());
+    } else {
+      // going into unpause state
+      const pausedFor = Date.now() - pauseTime;
+      setEnd((prev) => prev + pausedFor);
+    }
+
     setPause(!pause);
   };
 
