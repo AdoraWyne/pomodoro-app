@@ -32,9 +32,9 @@ function App() {
   };
 
   const handleReset = () => {
-    const t = Date.now();
-    setNow(t);
-    setEnd(t + 60_000);
+    const currentTime = Date.now();
+    setNow(currentTime);
+    setEnd(currentTime + 60_000);
     setPause(false);
   };
 
