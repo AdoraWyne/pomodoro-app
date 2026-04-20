@@ -22,8 +22,10 @@ function App() {
       setPauseTime(Date.now());
     } else {
       // going into unpause state
-      const pausedFor = Date.now() - pauseTime;
+      const currentTime = Date.now();
+      const pausedFor = currentTime - pauseTime;
       setEnd((prev) => prev + pausedFor);
+      setNow(currentTime);
     }
 
     setPause(!pause);
