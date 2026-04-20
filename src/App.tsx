@@ -19,6 +19,12 @@ function App() {
     setPause(!pause);
   };
 
+  const handleReset = () => {
+    const t = Date.now();
+    setNow(t);
+    setEnd(t + 60_000);
+  };
+
   useEffect(() => {
     if (!isRunning || pause) return;
 
@@ -34,6 +40,7 @@ function App() {
       <h1>Pomodoro App</h1>
       <p>{transformedTimer(second)}</p>
       <button onClick={handlePause}>Pause</button>
+      <button onClick={handleReset}>Reset</button>
     </>
   );
 }
