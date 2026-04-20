@@ -4,15 +4,18 @@ Build a React app that allows users to track a Pomodoro cycle, [this exercise](h
 
 ## Improvement
 
-- Use Temporal API instead of Date API - because Date will be replaced by Temporal soon.
 - customer hook `setInterval`
 - consider to use Zustand?
+- ❌ Use Temporal API instead of Date API - because Date will be replaced by Temporal soon.
+  - Tried to use `Temporal.Instant` and `Temporal.Duration` but I think it's a bit overkill here, as I had to intro more methods and a polyfill for this.
 
 ---
 
 # Learned
 
-When building the timer - mm:ss part, I was having this code:
+Here is the learning note for myself to read, [a full blog has been published on Medium](https://medium.com/@adorawyne/why-my-react-timer-drifts-and-how-to-fix-it-e3c8e88bf8af).
+
+When building the timer - `mm:ss` part, I was having this code:
 
 ```ts
 import { useEffect, useState } from "react";
@@ -56,8 +59,8 @@ This worked but the problem is **I'm using `setInterval` method** to count the s
 The drift could be due to resource allocation in single thread operation.
 For example:
 
-1. An expensive operation in queue or event loop might take more than 1000ms to execute.
-1. So the `setInterval` in queue or event loop will have to wait for this operation to finish first then only be executed, and that might be taken more than 1000ms.
+1. An expensive operation in the task queue might take more than 1000ms to execute.
+1. So the `setInterval` in the task queue will have to wait for this operation to finish first then only be executed, and that might be taken more than 1000ms.
 
 If this continue to happens, eventually the difference could catch up and might cause the time to drift away.
 
@@ -99,7 +102,7 @@ For example:
 
 ### Important note
 
-Realise I use `useInterval(() => {}, 100)`?
+Realise I use `setInterval(() => {}, 100)`?
 
 I don't update the timer at exactly 1000ms, because `setInterval` is not reliable. With 1000ms interval, that means `setNow` will only trigger **at least** 1000ms, not exactly at 1000ms.
 
