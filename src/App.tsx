@@ -7,18 +7,18 @@ const transformedTimer = (second: number) => {
 };
 
 function App() {
-  const [now, setNow] = useState(new Date()); // constantly moving
-  const [end, setEnd] = useState(() => new Date(Date.now() + 1_500_000)); // fixed , use useEnd when reset
+  const [now, setNow] = useState(() => Date.now()); // constantly moving
+  const [end, setEnd] = useState(() => Date.now() + 5000); // fixed , use useEnd when reset
 
   useEffect(() => {
     const secondTimer = setInterval(() => {
-      setNow(new Date());
+      setNow(Date.now());
     }, 100);
 
     return () => clearInterval(secondTimer);
   }, []);
 
-  const second = Math.ceil(Math.max(0, end.getTime() - now.getTime()) / 1000);
+  const second = Math.ceil(Math.max(0, end - now) / 1000);
 
   return (
     <>
