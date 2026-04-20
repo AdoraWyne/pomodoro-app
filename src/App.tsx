@@ -8,7 +8,7 @@ const transformedTimer = (second: number) => {
 
 function App() {
   const [now, setNow] = useState(0); // constantly moving
-  const [end, setEnd] = useState(60_000); // fixed , use useEnd when reset
+  const [end, setEnd] = useState(60_000); // fixed
   const [pause, setPause] = useState(true);
   const [pauseTime, setPauseTime] = useState(0);
 
@@ -38,10 +38,10 @@ function App() {
   };
 
   const handleReset = () => {
-    const currentTime = Date.now();
-    setNow(currentTime);
-    setEnd(currentTime + 60_000);
-    setPause(false);
+    setNow(0);
+    setEnd(60_000);
+    setPause(true);
+    setPauseTime(0);
   };
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function App() {
     <>
       <h1>Pomodoro App</h1>
       <p>{transformedTimer(second)}</p>
-      <button onClick={handlePause}>Pause</button>
+      <button onClick={handlePause}>{pause ? "Start" : "Pause"}</button>
       <button onClick={handleReset}>Reset</button>
     </>
   );
