@@ -7,9 +7,9 @@ const transformedTimer = (second: number) => {
 };
 
 function App() {
-  const [now, setNow] = useState(() => Date.now()); // constantly moving
-  const [end, setEnd] = useState(() => Date.now() + 60_000); // fixed , use useEnd when reset
-  const [pause, setPause] = useState(false);
+  const [now, setNow] = useState(0); // constantly moving
+  const [end, setEnd] = useState(60_000); // fixed , use useEnd when reset
+  const [pause, setPause] = useState(true);
   const [pauseTime, setPauseTime] = useState(0);
 
   const remainingSeconds = (end - now) / 1000;
@@ -21,11 +21,17 @@ function App() {
       // going into pause state
       setPauseTime(Date.now());
     } else {
-      // going into unpause state
-      const currentTime = Date.now();
-      const pausedFor = currentTime - pauseTime;
-      setEnd((prev) => prev + pausedFor);
-      setNow(currentTime);
+      // going into start state
+      if (pauseTime === 0) {
+        const currentTime = Date.now();
+        setNow(currentTime);
+        setEnd((prev) => prev + currentTime);
+      } else {
+        const currentTime = Date.now();
+        const pausedFor = currentTime - pauseTime;
+        setNow(currentTime);
+        setEnd((prev) => prev + pausedFor);
+      }
     }
 
     setPause(!pause);
