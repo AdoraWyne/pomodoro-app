@@ -4,9 +4,9 @@ Build a React app that allows users to track a Pomodoro cycle, [this exercise](h
 
 ## Improvement
 
-- customer hook `setInterval`
+- custom hook `setInterval`
 - consider to use Zustand?
-- ❌ Use Temporal API instead of Date API - because Date will be replaced by Temporal soon.
+- ❌ Use Temporal API instead of Date API
   - Tried to use `Temporal.Instant` and `Temporal.Duration` but I think it's a bit overkill here, as I had to intro more methods and a polyfill for this.
 
 ---
