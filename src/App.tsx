@@ -35,6 +35,7 @@ function App() {
     const t = Date.now();
     setNow(t);
     setEnd(t + 60_000);
+    setPause(false);
   };
 
   useEffect(() => {
