@@ -37,6 +37,13 @@ function App() {
     setPause(!pause);
   };
 
+  const handleSkip = () => {
+    setNow(end);
+    setEnd(60_000);
+    setPause(true);
+    setPauseTime(0);
+  };
+
   const handleReset = () => {
     setNow(0);
     setEnd(60_000);
@@ -59,6 +66,7 @@ function App() {
       <h1>Pomodoro App</h1>
       <p>{transformedTimer(second)}</p>
       <button onClick={handlePause}>{pause ? "Start" : "Pause"}</button>
+      <button onClick={handleSkip}>Skip</button>
       <button onClick={handleReset}>Reset</button>
     </>
   );
