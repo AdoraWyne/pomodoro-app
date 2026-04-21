@@ -8,7 +8,7 @@ interface State {
   pauseTime: number;
 }
 
-type Action = "running" | "pause" | "reset" | "skip"; // | "finish";
+type Action = "running" | "pause" | "reset" | "skip" | "finish";
 
 function reducer(state: State, action: Action): State {
   switch (action) {
@@ -57,6 +57,8 @@ function reducer(state: State, action: Action): State {
         pause: true,
         pauseTime: 0,
       };
+    case "finish":
+      return { ...state, pause: true };
   }
 }
 
@@ -73,19 +75,23 @@ function App() {
     pauseTime: 0,
   });
 
-  const newremainingSeconds = (state.end - state.now) / 1000;
-  const newisRunning = newremainingSeconds > 0;
+  const remainingSeconds = (state.end - state.now) / 1000;
+  const isRunning = remainingSeconds > 0;
   const second = Math.ceil(Math.max(0, state.end - state.now) / 1000);
 
   useEffect(() => {
-    if (!newisRunning || state.pause) return;
+    if (state.pause) return;
+    if (!isRunning) {
+      dispatch("finish");
+      return;
+    }
 
     const secondTimer = setInterval(() => {
       dispatch("running");
     }, 100);
 
     return () => clearInterval(secondTimer);
-  }, [newisRunning, state.pause]);
+  }, [isRunning, state.pause]);
 
   return (
     <>
