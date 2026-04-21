@@ -8,52 +8,44 @@ interface State {
   pauseTime: number;
 }
 
-type Action = "running" | "pause" | "reset" | "skip" | "finish";
+type Action = "start" | "running" | "pause" | "reset" | "skip" | "finish";
 
 function reducer(state: State, action: Action): State {
   switch (action) {
+    case "start": {
+      const currentTime = Date.now();
+      const pausedFor =
+        state.pauseTime === 0 ? currentTime : currentTime - state.pauseTime;
+
+      return {
+        ...state,
+        end: state.end + pausedFor,
+        now: currentTime,
+        pause: false,
+        pauseTime: 0,
+      };
+    }
     case "running":
       return { ...state, now: Date.now() };
     case "pause":
-      if (!state.pause) {
-        return {
-          ...state,
-          pauseTime: Date.now(),
-          pause: !state.pause,
-        };
-      } else {
-        if (state.pauseTime === 0) {
-          const currentTime = Date.now();
-          return {
-            ...state,
-            now: currentTime,
-            end: state.end + currentTime,
-            pause: !state.pause,
-          };
-        } else {
-          const currentTime = Date.now();
-          const pausedFor = currentTime - state.pauseTime;
-          return {
-            ...state,
-            now: currentTime,
-            end: state.end + pausedFor,
-            pause: !state.pause,
-          };
-        }
-      }
+      return {
+        ...state,
+        pauseTime: Date.now(),
+        pause: true,
+      };
     case "reset":
       return {
         ...state,
-        now: 0,
         end: 5_000,
+        now: 0,
         pause: true,
         pauseTime: 0,
       };
     case "skip":
       return {
         ...state,
-        now: state.end,
         end: 5_000,
+        now: state.end,
         pause: true,
         pauseTime: 0,
       };
@@ -97,7 +89,7 @@ function App() {
     <>
       <h1>Pomodoro App</h1>
       <p>{transformedTimer(second)}</p>
-      <button onClick={() => dispatch("pause")}>
+      <button onClick={() => dispatch(state.pause ? "start" : "pause")}>
         {state.pause ? "Start" : "Pause"}
       </button>
       <button onClick={() => dispatch("skip")}>Skip</button>
