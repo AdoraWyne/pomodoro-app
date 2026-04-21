@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from "react";
 import "./App.css";
+import { TESTING_SECONDS } from "./constants";
 
 interface State {
   end: number;
@@ -35,16 +36,14 @@ function reducer(state: State, action: Action): State {
       };
     case "reset":
       return {
-        ...state,
-        end: 5_000,
+        end: TESTING_SECONDS,
         now: 0,
         pause: true,
         pauseTime: 0,
       };
     case "skip":
       return {
-        ...state,
-        end: 5_000,
+        end: TESTING_SECONDS,
         now: state.end,
         pause: true,
         pauseTime: 0,
@@ -62,7 +61,7 @@ const transformedTimer = (second: number) => {
 function App() {
   const [state, dispatch] = useReducer(reducer, {
     now: 0,
-    end: 5_000,
+    end: TESTING_SECONDS,
     pause: true,
     pauseTime: 0,
   });
