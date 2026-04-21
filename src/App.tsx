@@ -1,5 +1,64 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import "./App.css";
+
+interface State {
+  end: number;
+  now: number;
+  pause: boolean;
+  pauseTime: number;
+}
+
+type Action = "running" | "pause" | "reset" | "skip"; // | "finish";
+
+function reducer(state: State, action: Action): State {
+  switch (action) {
+    case "running":
+      return { ...state, now: Date.now() };
+    case "pause":
+      if (!state.pause) {
+        return {
+          ...state,
+          pauseTime: Date.now(),
+          pause: !state.pause,
+        };
+      } else {
+        if (state.pauseTime === 0) {
+          const currentTime = Date.now();
+          return {
+            ...state,
+            now: currentTime,
+            end: state.end + currentTime,
+            pause: !state.pause,
+          };
+        } else {
+          const currentTime = Date.now();
+          const pausedFor = currentTime - state.pauseTime;
+          return {
+            ...state,
+            now: currentTime,
+            end: state.end + pausedFor,
+            pause: !state.pause,
+          };
+        }
+      }
+    case "reset":
+      return {
+        ...state,
+        now: 0,
+        end: 5_000,
+        pause: true,
+        pauseTime: 0,
+      };
+    case "skip":
+      return {
+        ...state,
+        now: state.end,
+        end: 5_000,
+        pause: true,
+        pauseTime: 0,
+      };
+  }
+}
 
 const formatter = (n: number) => String(n).padStart(2, "0");
 const transformedTimer = (second: number) => {
@@ -7,67 +66,36 @@ const transformedTimer = (second: number) => {
 };
 
 function App() {
-  const [now, setNow] = useState(0); // constantly moving
-  const [end, setEnd] = useState(60_000); // fixed
-  const [pause, setPause] = useState(true);
-  const [pauseTime, setPauseTime] = useState(0);
+  const [state, dispatch] = useReducer(reducer, {
+    now: 0,
+    end: 5_000,
+    pause: true,
+    pauseTime: 0,
+  });
 
-  const remainingSeconds = (end - now) / 1000;
-  const isRunning = remainingSeconds > 0;
-  const second = Math.ceil(Math.max(0, end - now) / 1000);
-
-  const handlePause = () => {
-    if (!pause) {
-      // going into pause state
-      setPauseTime(Date.now());
-    } else {
-      // going into start state
-      if (pauseTime === 0) {
-        const currentTime = Date.now();
-        setNow(currentTime);
-        setEnd((prev) => prev + currentTime);
-      } else {
-        const currentTime = Date.now();
-        const pausedFor = currentTime - pauseTime;
-        setNow(currentTime);
-        setEnd((prev) => prev + pausedFor);
-      }
-    }
-
-    setPause(!pause);
-  };
-
-  const handleSkip = () => {
-    setNow(end);
-    setEnd(60_000);
-    setPause(true);
-    setPauseTime(0);
-  };
-
-  const handleReset = () => {
-    setNow(0);
-    setEnd(60_000);
-    setPause(true);
-    setPauseTime(0);
-  };
+  const newremainingSeconds = (state.end - state.now) / 1000;
+  const newisRunning = newremainingSeconds > 0;
+  const second = Math.ceil(Math.max(0, state.end - state.now) / 1000);
 
   useEffect(() => {
-    if (!isRunning || pause) return;
+    if (!newisRunning || state.pause) return;
 
     const secondTimer = setInterval(() => {
-      setNow(Date.now());
+      dispatch("running");
     }, 100);
 
     return () => clearInterval(secondTimer);
-  }, [isRunning, pause]);
+  }, [newisRunning, state.pause]);
 
   return (
     <>
       <h1>Pomodoro App</h1>
       <p>{transformedTimer(second)}</p>
-      <button onClick={handlePause}>{pause ? "Start" : "Pause"}</button>
-      <button onClick={handleSkip}>Skip</button>
-      <button onClick={handleReset}>Reset</button>
+      <button onClick={() => dispatch("pause")}>
+        {state.pause ? "Start" : "Pause"}
+      </button>
+      <button onClick={() => dispatch("skip")}>Skip</button>
+      <button onClick={() => dispatch("reset")}>Reset</button>
     </>
   );
 }
