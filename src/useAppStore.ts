@@ -64,27 +64,32 @@ const useAppStore = () => {
   const isRunning = remainingSeconds > 0;
   const seconds = Math.ceil(Math.max(0, state.end - state.now) / 1000);
 
+  // local references so names are standardised
+  const isPaused = state.pause;
+  const running = () => dispatch("running");
+  const finish = () => dispatch("finish");
+
   useEffect(() => {
-    if (state.pause) return;
+    if (isPaused) return;
     if (!isRunning) {
-      dispatch("finish");
+      finish();
       return;
     }
 
     const secondTimer = setInterval(() => {
-      dispatch("running");
+      running();
     }, 100);
 
     return () => clearInterval(secondTimer);
-  }, [state.pause, isRunning]);
+  }, [isPaused, isRunning]);
 
   return {
     seconds,
-    isPaused: state.pause,
+    isPaused,
     start: () => dispatch("start"),
+    pause: () => dispatch("pause"),
     skip: () => dispatch("skip"),
     reset: () => dispatch("reset"),
-    pause: () => dispatch("pause"),
   };
 };
 
