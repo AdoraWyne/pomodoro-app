@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import "./App.css";
 import useAppStore from "./useAppStore";
 
@@ -8,31 +7,7 @@ const transformedTimer = (seconds: number) => {
 };
 
 function App() {
-  const {
-    seconds,
-    isPaused,
-    isRunning,
-    start,
-    running,
-    pause,
-    reset,
-    skip,
-    finish,
-  } = useAppStore();
-
-  useEffect(() => {
-    if (isPaused) return;
-    if (!isRunning) {
-      finish();
-      return;
-    }
-
-    const secondTimer = setInterval(() => {
-      running();
-    }, 100);
-
-    return () => clearInterval(secondTimer);
-  }, [isPaused, isRunning, running, finish]);
+  const { seconds, isPaused, start, pause, reset, skip } = useAppStore();
 
   return (
     <>

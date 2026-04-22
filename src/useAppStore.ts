@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { INITIAL_SECONDS } from "./constants";
 
 interface State {
@@ -64,13 +64,24 @@ const useAppStore = () => {
   const isRunning = remainingSeconds > 0;
   const seconds = Math.ceil(Math.max(0, state.end - state.now) / 1000);
 
+  useEffect(() => {
+    if (state.pause) return;
+    if (!isRunning) {
+      dispatch("finish");
+      return;
+    }
+
+    const secondTimer = setInterval(() => {
+      dispatch("running");
+    }, 100);
+
+    return () => clearInterval(secondTimer);
+  }, [state.pause, isRunning]);
+
   return {
     seconds,
     isPaused: state.pause,
-    isRunning: isRunning,
     start: () => dispatch("start"),
-    finish: () => dispatch("finish"),
-    running: () => dispatch("running"),
     skip: () => dispatch("skip"),
     reset: () => dispatch("reset"),
     pause: () => dispatch("pause"),
