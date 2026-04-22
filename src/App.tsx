@@ -1,98 +1,48 @@
-import { useEffect, useReducer } from "react";
+import { useEffect } from "react";
 import "./App.css";
-import { TESTING_SECONDS } from "./constants";
-
-interface State {
-  end: number;
-  now: number;
-  pause: boolean;
-  pauseTime: number;
-}
-
-type Action = "start" | "running" | "pause" | "reset" | "skip" | "finish";
-
-function reducer(state: State, action: Action): State {
-  switch (action) {
-    case "start": {
-      const currentTime = Date.now();
-      const pausedFor =
-        state.pauseTime === 0 ? currentTime : currentTime - state.pauseTime;
-
-      return {
-        ...state,
-        end: state.end + pausedFor,
-        now: currentTime,
-        pause: false,
-        pauseTime: 0,
-      };
-    }
-    case "running":
-      return { ...state, now: Date.now() };
-    case "pause":
-      return {
-        ...state,
-        pauseTime: Date.now(),
-        pause: true,
-      };
-    case "reset":
-      return {
-        end: TESTING_SECONDS,
-        now: 0,
-        pause: true,
-        pauseTime: 0,
-      };
-    case "skip":
-      return {
-        end: TESTING_SECONDS,
-        now: state.end,
-        pause: true,
-        pauseTime: 0,
-      };
-    case "finish":
-      return { ...state, pause: true };
-  }
-}
+import useAppStore from "./useAppStore";
 
 const formatter = (n: number) => String(n).padStart(2, "0");
-const transformedTimer = (second: number) => {
-  return `${formatter(Math.floor(second / 60))}:${formatter(second % 60)}`;
+const transformedTimer = (seconds: number) => {
+  return `${formatter(Math.floor(seconds / 60))}:${formatter(seconds % 60)}`;
 };
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, {
-    now: 0,
-    end: TESTING_SECONDS,
-    pause: true,
-    pauseTime: 0,
-  });
-
-  const remainingSeconds = (state.end - state.now) / 1000;
-  const isRunning = remainingSeconds > 0;
-  const second = Math.ceil(Math.max(0, state.end - state.now) / 1000);
+  const {
+    seconds,
+    isPaused,
+    isRunning,
+    start,
+    running,
+    pause,
+    reset,
+    skip,
+    finish,
+  } = useAppStore();
 
   useEffect(() => {
-    if (state.pause) return;
+    if (isPaused) return;
     if (!isRunning) {
-      dispatch("finish");
+      finish();
       return;
     }
 
     const secondTimer = setInterval(() => {
-      dispatch("running");
+      running();
     }, 100);
 
     return () => clearInterval(secondTimer);
-  }, [isRunning, state.pause]);
+  }, [isPaused, isRunning, running, finish]);
 
   return (
     <>
       <h1>Pomodoro App</h1>
-      <p>{transformedTimer(second)}</p>
-      <button onClick={() => dispatch(state.pause ? "start" : "pause")}>
-        {state.pause ? "Start" : "Pause"}
+      <p>{transformedTimer(seconds)}</p>
+      <button onClick={() => (isPaused ? start() : pause())}>
+        {isPaused ? "Start" : "Pause"}
       </button>
-      <button onClick={() => dispatch("skip")}>Skip</button>
-      <button onClick={() => dispatch("reset")}>Reset</button>
+      <button onClick={() => skip()}>Skip</button>
+      <button onClick={() => reset()}>Reset</button>
     </>
   );
 }
