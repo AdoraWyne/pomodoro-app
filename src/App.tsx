@@ -1,17 +1,35 @@
 import "./App.css";
 import useAppStore from "./useAppStore";
+import type { Phase } from "./useAppStore";
 
 const formatter = (n: number) => String(n).padStart(2, "0");
 const transformedTimer = (seconds: number) => {
   return `${formatter(Math.floor(seconds / 60))}:${formatter(seconds % 60)}`;
 };
 
+const getPhaseStatement = (phase: Phase): string => {
+  switch (phase) {
+    case "focus":
+      return "(focus time)";
+    case "break":
+      return "(short break)";
+    case "long break":
+      return "(long break)";
+    default:
+      return "";
+  }
+};
+
 function App() {
-  const { seconds, isPaused, start, pause, reset, skip } = useAppStore();
+  const { phase, focusSessions, seconds, isPaused, start, pause, reset, skip } =
+    useAppStore();
 
   return (
     <>
       <h1>Pomodoro App</h1>
+      <p>
+        Focus Session: {focusSessions} <span>{getPhaseStatement(phase)}</span>
+      </p>
       <p>{transformedTimer(seconds)}</p>
       <button onClick={() => (isPaused ? start() : pause())}>
         {isPaused ? "Start" : "Pause"}

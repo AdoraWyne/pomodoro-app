@@ -1,16 +1,14 @@
 import { useEffect, useReducer } from "react";
-import {
-  FOCUS_SECONDS,
-  BREAK_SECONDS,
-  LONG_BREAK_SECONDS,
-} from "./constants";
+import { FOCUS_SECONDS, BREAK_SECONDS, LONG_BREAK_SECONDS } from "./constants";
+
+export type Phase = "idle" | "focus" | "break" | "long break";
 
 interface State {
   end: number;
   now: number;
   pause: boolean;
   pauseTime: number;
-  phase: "idle" | "focus" | "break" | "long break";
+  phase: Phase;
   focusSessions: number;
 }
 
@@ -156,6 +154,8 @@ const useAppStore = () => {
   }, [isPaused, isRunning]);
 
   return {
+    phase: state.phase,
+    focusSessions: state.focusSessions,
     seconds,
     isPaused,
     start: () => dispatch("start"),
