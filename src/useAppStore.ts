@@ -60,13 +60,7 @@ function reducer(state: State, action: Action): State {
         pauseTime: 0,
       };
     case "skip":
-      return {
-        ...state,
-        end: INITIAL_SECONDS,
-        now: state.end,
-        pause: true,
-        pauseTime: 0,
-      };
+      return reducer(state, "finish");
     case "finish": {
       const currentTime = Date.now();
 
