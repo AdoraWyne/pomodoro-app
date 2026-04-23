@@ -126,8 +126,8 @@ const useAppStore = () => {
   useEffect(() => {
     if (isPaused) return;
     if (!isRunning) {
-      finish();
-      return;
+      const timeout = setTimeout(() => finish(), 1000);
+      return () => clearTimeout(timeout);
     }
 
     const secondTimer = setInterval(() => {
