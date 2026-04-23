@@ -1,5 +1,10 @@
 import { useEffect, useReducer } from "react";
-import { INITIAL_SECONDS } from "./constants";
+import {
+  INITIAL_SECONDS,
+  FOCUS_SECONDS,
+  BREAK_SECONDS,
+  LONG_BREAK_SECONDS,
+} from "./constants";
 
 interface State {
   end: number;
@@ -22,7 +27,6 @@ function reducer(state: State, action: Action): State {
       const focusSessions = state.pauseTime === 0 ? 1 : state.focusSessions;
 
       return {
-        ...state,
         end: state.end + pausedFor,
         now: currentTime,
         pause: false,
