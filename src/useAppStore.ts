@@ -21,18 +21,26 @@ function reducer(state: State, action: Action): State {
   switch (action) {
     case "start": {
       const currentTime = Date.now();
-      const pausedFor =
-        state.pauseTime === 0 ? currentTime : currentTime - state.pauseTime;
-      const phase = state.pauseTime === 0 ? "focus" : state.phase;
-      const focusSessions = state.pauseTime === 0 ? 1 : state.focusSessions;
+      const isFreshStart = state.pauseTime === 0;
+
+      if (isFreshStart) {
+        return {
+          end: state.end + currentTime,
+          now: currentTime,
+          pause: false,
+          pauseTime: 0,
+          phase: "focus",
+          focusSessions: 1,
+        };
+      }
 
       return {
-        end: state.end + pausedFor,
+        end: state.end + (currentTime - state.pauseTime),
         now: currentTime,
         pause: false,
         pauseTime: 0,
-        phase,
-        focusSessions: focusSessions,
+        phase: state.phase,
+        focusSessions: state.focusSessions,
       };
     }
     case "running":
