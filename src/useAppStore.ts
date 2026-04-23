@@ -6,6 +6,8 @@ interface State {
   now: number;
   pause: boolean;
   pauseTime: number;
+  phase: "idle" | "focus" | "break" | "long break";
+  focusSessions: number;
 }
 
 type Action = "start" | "running" | "pause" | "reset" | "skip" | "finish";
@@ -16,6 +18,8 @@ function reducer(state: State, action: Action): State {
       const currentTime = Date.now();
       const pausedFor =
         state.pauseTime === 0 ? currentTime : currentTime - state.pauseTime;
+      const phase = state.pauseTime === 0 ? "focus" : state.phase;
+      const focusSessions = state.pauseTime === 0 ? 1 : state.focusSessions;
 
       return {
         ...state,
@@ -23,6 +27,8 @@ function reducer(state: State, action: Action): State {
         now: currentTime,
         pause: false,
         pauseTime: 0,
+        phase,
+        focusSessions: focusSessions,
       };
     }
     case "running":
@@ -35,6 +41,7 @@ function reducer(state: State, action: Action): State {
       };
     case "reset":
       return {
+        ...state,
         end: INITIAL_SECONDS,
         now: 0,
         pause: true,
@@ -42,22 +49,65 @@ function reducer(state: State, action: Action): State {
       };
     case "skip":
       return {
+        ...state,
         end: INITIAL_SECONDS,
         now: state.end,
         pause: true,
         pauseTime: 0,
       };
-    case "finish":
-      return { ...state, pause: true };
+    case "finish": {
+      const currentTime = Date.now();
+
+      if (state.phase === "focus") {
+        return {
+          ...state,
+          now: currentTime,
+          end: currentTime + BREAK_SECONDS,
+          pause: false,
+          pauseTime: 0,
+          phase: "break",
+        };
+      }
+      if (state.phase === "break" && state.focusSessions < 4) {
+        return {
+          now: currentTime,
+          end: currentTime + FOCUS_SECONDS,
+          pause: false,
+          pauseTime: 0,
+          phase: "focus",
+          focusSessions: state.focusSessions + 1,
+        };
+      }
+      if (state.phase === "break" && state.focusSessions >= 4) {
+        return {
+          ...state,
+          now: currentTime,
+          end: currentTime + LONG_BREAK_SECONDS,
+          pause: false,
+          pauseTime: 0,
+          phase: "long break",
+        };
+      }
+      return {
+        now: 0,
+        end: FOCUS_SECONDS,
+        pause: true,
+        pauseTime: 0,
+        phase: "idle",
+        focusSessions: 0,
+      };
+    }
   }
 }
 
 const useAppStore = () => {
   const [state, dispatch] = useReducer(reducer, {
     now: 0,
-    end: INITIAL_SECONDS,
+    end: FOCUS_SECONDS,
     pause: true,
     pauseTime: 0,
+    phase: "idle",
+    focusSessions: 0,
   });
 
   const remainingSeconds = (state.end - state.now) / 1000;
