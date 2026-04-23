@@ -1,6 +1,5 @@
 import { useEffect, useReducer } from "react";
 import {
-  INITIAL_SECONDS,
   FOCUS_SECONDS,
   BREAK_SECONDS,
   LONG_BREAK_SECONDS,
@@ -16,6 +15,19 @@ interface State {
 }
 
 type Action = "start" | "running" | "pause" | "reset" | "skip" | "finish";
+
+function getPhaseSeconds(phase: State["phase"]): number {
+  switch (phase) {
+    case "focus":
+      return FOCUS_SECONDS;
+    case "break":
+      return BREAK_SECONDS;
+    case "long break":
+      return LONG_BREAK_SECONDS;
+    case "idle":
+      return FOCUS_SECONDS;
+  }
+}
 
 function reducer(state: State, action: Action): State {
   switch (action) {
@@ -51,14 +63,18 @@ function reducer(state: State, action: Action): State {
         pauseTime: Date.now(),
         pause: true,
       };
-    case "reset":
+    case "reset": {
+      if (state.phase === "idle") return state;
+
+      const currentTime = Date.now();
       return {
         ...state,
-        end: INITIAL_SECONDS,
-        now: 0,
-        pause: true,
+        end: currentTime + getPhaseSeconds(state.phase),
+        now: currentTime,
+        pause: false,
         pauseTime: 0,
       };
+    }
     case "skip":
       return reducer(state, "finish");
     case "finish": {
