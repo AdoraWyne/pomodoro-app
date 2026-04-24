@@ -30,6 +30,10 @@ h1 {
   color: #ef2f88;
 }
 
+.button-group {
+  display: flex;
+  gap: 1.5rem;
+}
 
 button {
   width: 10%;
