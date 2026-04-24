@@ -27,15 +27,19 @@ function App() {
   return (
     <>
       <h1>Pomodoro App</h1>
-      <p>
+      <p className="session-info">
         Focus Session: {focusSessions} <span>{getPhaseStatement(phase)}</span>
       </p>
-      <p>{transformedTimer(seconds)}</p>
-      <button onClick={() => (isPaused ? start() : pause())}>
-        {isPaused ? "Start" : "Pause"}
-      </button>
-      <button onClick={() => skip()}>Skip</button>
-      <button onClick={() => reset()}>Reset</button>
+      <div className="timer-container">
+        <p className="timer-display">{transformedTimer(seconds)}</p>
+        <div className="button-group">
+          <button onClick={() => skip()}>Skip</button>
+          <button onClick={() => (isPaused ? start() : pause())}>
+            {isPaused ? "Start" : "Pause"}
+          </button>
+          <button onClick={() => reset()}>Reset</button>
+        </div>
+      </div>
     </>
   );
 }
