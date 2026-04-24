@@ -33,7 +33,9 @@ function App() {
       <div className="timer-container">
         <p className="timer-display">{transformedTimer(seconds)}</p>
         <div className="button-group">
-          <button onClick={() => skip()}>Skip</button>
+          <button disabled={isPaused} onClick={() => skip()}>
+            Skip
+          </button>
           <button onClick={() => (isPaused ? start() : pause())}>
             {isPaused ? "Start" : "Pause"}
           </button>
