@@ -4,6 +4,8 @@ Build a React app that allows users to track a Pomodoro cycle, [this exercise](h
 
 ## Improvement
 
+- Allow user to enter the time they want in each focus, break and long break.
+- Skip button?
 - Tests for this app
 - ✅ UI feedback — do you want to show the current phase (e.g. "Focus 2/4", "Break", "Long Break") on screen?
 - ❌ Use Temporal API instead of Date API
