@@ -4,9 +4,8 @@ Build a React app that allows users to track a Pomodoro cycle, [this exercise](h
 
 ## Improvement
 
-- custom hook `useInterval`?
-- consider to use Zustand?
 - Tests for this app
+- ✅ UI feedback — do you want to show the current phase (e.g. "Focus 2/4", "Break", "Long Break") on screen?
 - ❌ Use Temporal API instead of Date API
   - Tried to use `Temporal.Instant` and `Temporal.Duration` but I think it's a bit overkill here, as I had to intro more methods and a polyfill for this.
 
